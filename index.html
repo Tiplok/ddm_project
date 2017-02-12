@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+
+<!-- Directive ng-app attach the gemStore module to the HTML page. -->
+<html ng-app="store">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>AngularJS</title>
+
+        <!-- CSS imports -->
+            <!-- Bootstrap CDN -->
+            <!-- minified CSS -->
+            <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">-->
+            <!-- Optional theme -->
+            <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">-->
+
+            <!-- Bootstrap local -->
+            <!-- minified CSS -->
+            <link rel="stylesheet" href="libs/bootstrap/css/bootstrap.min.css"/>
+            <!-- Optional theme -->
+            <link rel="stylesheet" href="libs/bootstrap/css/bootstrap-theme.min.css"/>
+
+            <!-- My CSS file -->
+            <link rel="stylesheet" href="style.css"/>
+        <!-- /CSS imports -->
+
+        <!-- Javascript imports -->
+            <!-- JQuery CDN -->
+            <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>-->
+
+            <!-- JQuery local -->
+            <script type="text/javascript" src="libs/jquery/jquery-3.1.1.min.js"></script>
+
+            <!-- JavaScript Bootstrap CDN -->
+            <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>-->
+
+            <!-- JavaScript Bootstrap local -->
+            <script type="text/javascript" src="libs/bootstrap/js/bootstrap.min.js"></script>
+
+            <!-- AngularJS 1 CDN -->
+            <!--<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>-->
+
+            <!-- AngularJS 1 local -->
+            <script type="text/javascript" src="libs/angularjs/angular.js"></script>
+
+            <!-- My Javascript file -->
+            <script type="text/javascript" src="app.js"></script>
+        <!-- /Javascript imports -->
+
+    </head>
+
+    <body>
+        <div class="container theme-showcase">
+            <!-- Products container -->
+            <!-- Directive ng-controller attach our controller 'StoreController', 'as' is to specify an alias, our alias here is 'store' -->
+            <div class="list-group" ng-controller="StoreController as store">
+
+                <!-- Product container -->
+                <!-- Directive ng-repeat use an array and repeat a section for each object of array (here, for each product)
+                <!-- Directive ng-hide will hide the element if the value of the expression is true. -->
+                <div class="list-group-item" ng-repeat="product in store.products" ng-hide="product.soldOut">
+                    <h3>
+                        {{product.name}}
+                        <!--
+                            Pipe - send the output into right member
+                            Notice it gives the dollar sign (localized)
+                            Specifies number of decimals
+                            currency = format into currency
+                        -->
+                        <em class="pull-right">{{product.price | currency}}</em>
+                    </h3>
+
+                    <!-- Image Gallery  -->
+                    <div class='gallery' ng-show="product.images.length" ng-controller="GalleryController as gallery">
+                        <img ng-src="{{product.images[gallery.current]}}" />
+                        <ul class="list-inline thumbs">
+                            <li class="thumbnail" ng-repeat="image in product.images">
+                                <img ng-src="{{image}}" />
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Directive ng-show will only show the element if the value of the Expression is true. -->
+                    <button ng-show="product.canPurchase"> Add to Cart </button>
+
+                    <!-- Product tabs -->
+                    <section ng-controller="TabController as tab">
+                        <ul class="nav nav-pills">
+                            <li ng-class="{ active:tab.isSet(1) }">
+                                <a href ng-click="tab.setTab(1)">Description</a>
+                            </li>
+                            <li ng-class="{ active:tab.isSet(2) }">
+                                <a href ng-click="tab.setTab(2)">Specifications</a>
+                            </li>
+                            <li ng-class="{ active:tab.isSet(3) }">
+                                <a href ng-click="tab.setTab(3)">Reviews</a>
+                            </li>
+                        </ul>
+
+                        <!-- Product tabs details -->
+                        <div class="panel" ng-show="tab.isSet(1)">
+                            <h4>Description</h4>
+                            <p>{{product.description}}</p>
+                        </div>
+
+                        <div class="panel" ng-show="tab.isSet(2)">
+                            <h4>Specifications</h4>
+                            <p>Shine : {{product.shine}}</p>
+                        </div>
+
+                        <div class="panel" ng-show="tab.isSet(3)">
+                            <h4>Reviews</h4>
+
+                            <!-- Product reviews -->
+                            <div ng-repeat="review in product.reviews">
+                                <p><b>{{review.stars}} Stars</b> {{review.body}}<br>
+                                - {{review.author}}</p>
+                            </div>
+
+                            <!-- Review form -->
+                            <form name="reviewForm">
+                                <!-- Review preview -->
+                                <div>
+                                    <p><b>{{review.stars}} Stars</b> {{review.body}}<br>
+                                        - {{review.author}}</p>
+                                </div>
+
+                                <select ng-model="review.stars">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
+                                <textarea ng-model="review.body"></textarea>
+                                <label>-</label>
+                                <!-- review.author has the same value of that input -->
+                                <input ng-model="review.author" type="email"/>
+                                <input type="submit" value="Submit Review"/>
+                            </form>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
