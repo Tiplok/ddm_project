@@ -1,14 +1,18 @@
 // Wrapping Javascript in a closure is a good habit !
 (function(){
     // A module named gemStore
-    var app = angular.module('store', []);
+    var app = angular.module('store', ['product-directives']);
 
     // Controllers are where we define our app's behavior by defining functions and values
     // That controller is attached to our app -> app.controller
-    app.controller('StoreController', function(){
-        // this.products is a property of our controller
-        this.products = gems;
-    });
+    app.controller('StoreController', ['$http', function($http){
+        var store = this;
+        store.products = [];
+        store.products = gems;
+        /*$http.get('/products.json').success(function(data){
+            store.products = data;
+        });*/
+    }]);
 
     app.controller('GalleryController', function(){
         this.current = 0;
@@ -21,16 +25,15 @@
         };
     });
 
-    app.controller('TabController', function(){
-        this.tab = 1;
+    app.controller('ReviewController', function(){
+       this.review = {};
 
-        this.setTab = function(tab){
-            this.tab = tab;
-        };
-
-        this.isSet = function(checkTab){
-            return this.tab === checkTab;
-        }
+       this.addReview = function(product){
+           this.review.createdOn = Date.now();
+           product.reviews.push(this.review);
+           // Clear out the review, so the form will reset
+           this.review = {};
+       }
     });
 
     var gems = [
